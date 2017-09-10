@@ -19,3 +19,13 @@ at a given input time, as well as the maximum velocity, acceleration and jerk am
     * changes of lane (to prevent unnecessary lane changes)
     * deviations from central lane (to prefer central lane `1`, since it gives more options to select lane change in the future)
     * obstacle cars with similar `d` than ego and a near `s` (risk of collision)
+
+## Algorithm outline
+The high level steps of the algorithm are in `int main()` in `main.cpp`. At each time step:
+* The telemetry from the simulator is extracted, containing the ego state (`x`, `y`, `s`, `d`, `yaw`, `speed`), the ego previous path, the ego end path `s` and `d` Frenet coordinates, and the data from sensor fusion `sensor_fusion` with the estimated position of each vehicle on the road within sensors range.
+* The ego reference state (position, velocity and acceleration) is estimated. If the previous path contains fewer than 2 points, then the reference state is set to the current ego state; else, the reference state is set to the state at the end of the previous path. Note that, if the previous path contains more than 2 points, then also the ego acceleration is estimated with divided differences.
+* Select the target state. This is the most complex step of the algorithm, consisting of the following steps:
+ * Generate a list of candidate target states:
+  * `N_s` values of target s are considered, from `ref_s` to `ref_s + N*DT*max_speed`
+  * `N_vs` values of target velocitiy along s are considered, from `0` to `max_speed`
+  * `N_d` values of target d are considered (2., 6. and 10.) if lane change is enabled
