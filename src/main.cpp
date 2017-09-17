@@ -422,7 +422,7 @@ int main()
 
           	// [2] CHOOSE TARGET LANE AND SPEED ===================================
 
-			// sensor_fusion[i] : {id, x, y, vx, vy, s, d} with vx, vy in [m/s]
+		// sensor_fusion[i] : {id, x, y, vx, vy, s, d} with vx, vy in [m/s]
 
           	// s and speed of next car on each lane
           	vector<bool> next_car = {false, false, false};
@@ -477,27 +477,15 @@ int main()
 
       		}
 
+		
       		// initialise target lane to lane in reference state
       		// and target velocity to maximum velocity
       		int target_lane = lane_index(ref_d);
       		double target_vel = max_vel;
       		bool bTargetSelected = false;
 
-
-      		// case middle line is free and it is safe to change lanes:
-      		// target middle line and max velocity
-      		// (middle lane is the preferred one because it has a lane on each side)
-      		if( target_lane != 1 && !next_car[1]
-      		      && ( !prev_car[1] || prev_car_dist[1]>35. ) )
-      		{
-      			target_lane = 1;
-      			target_vel = max_vel;
-      			bTargetSelected = true;
-      			cout << "middle line is free, target it" << endl;
-      		}
-
       		// case no car in front: keep lane and target max velocity
-      		else if( !next_car[target_lane] || next_car_dist[target_lane] > 50. )
+      		if( !next_car[target_lane] || next_car_dist[target_lane] > 50. )
       		{
       			target_lane = target_lane;
       			target_vel = max_vel;
@@ -513,9 +501,9 @@ int main()
       			int candidate_lane = 1;
 
       			if( !next_car[candidate_lane] ||
-      				  ( next_car_dist[candidate_lane]>30.
+      				( next_car_dist[candidate_lane] > next_car_dist[target_lane]
       			        && next_car_v[candidate_lane] > next_car_v[target_lane] ) 
-      				  && ( !prev_car[candidate_lane] || prev_car_dist[candidate_lane]>35. ) )
+      				&& ( !prev_car[candidate_lane] || prev_car_dist[candidate_lane]>35. ) )
       			{
       				target_lane = candidate_lane;
       				if( next_car[candidate_lane] )
@@ -536,9 +524,9 @@ int main()
       			int candidate_lane = 2;
 
       			if( !next_car[candidate_lane] ||
-      				  ( next_car_dist[candidate_lane]>30.
+      				( next_car_dist[candidate_lane] > next_car_dist[target_lane]
       			        && next_car_v[candidate_lane] > next_car_v[target_lane] ) 
-      				  && ( !prev_car[candidate_lane] || prev_car_dist[candidate_lane]>35. ) )
+      				&& ( !prev_car[candidate_lane] || prev_car_dist[candidate_lane]>35. ) )
       			{
       				target_lane = candidate_lane;
       				if( next_car[candidate_lane] )
@@ -554,9 +542,9 @@ int main()
       			candidate_lane = 0;
 
       			if( !next_car[candidate_lane] ||
-      				  ( next_car_dist[candidate_lane]>30.
+      				( next_car_dist[candidate_lane] > next_car_dist[target_lane]
       			        && next_car_v[candidate_lane] > next_car_v[target_lane] ) 
-      				  && ( !prev_car[candidate_lane] || prev_car_dist[candidate_lane]>35. ) )
+      				&& ( !prev_car[candidate_lane] || prev_car_dist[candidate_lane]>35. ) )
       			{
       				target_lane = candidate_lane;
       				if( next_car[candidate_lane] )
